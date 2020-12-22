@@ -8,33 +8,23 @@ class Item:
 
 
 class Seeds(Item):
-    @property
-    def size(self):
-        return 3
+    size = 3
 
 
 class Water(Item):
-    @property
-    def size(self):
-        return 3
+    size = 3
 
 
 class Feed(Item):
-    @property
-    def size(self):
-        return 2
+    size = 2
 
 
 class Manure(Item):
-    @property
-    def size(self):
-        return 5
+    size = 5
 
 
 class Wheelbarrow(Item):
-    @property
-    def size(self):
-        return 7  # size too big to put in the wheelbarrow.
+    size = 7
 
 
 class SellableItem(Item):
@@ -44,40 +34,20 @@ class SellableItem(Item):
 
 
 class Eggs(SellableItem):
-    @property
-    def size(self):
-        return 1
-
-    @property
-    def price(self):
-        return 2
+    size = 1
+    price = 2
 
 
 class Vegetables(SellableItem):
-    @property
-    def size(self):
-        return 2
-
-    @property
-    def price(self):
-        return 3
+    size = 2
+    price = 3
 
 
 class Herbs(SellableItem):
-    @property
-    def size(self):
-        return 1
-
-    @property
-    def price(self):
-        return 4
+    size = 1
+    price = 4
 
 
 class Roses(SellableItem):
-    @property
-    def size(self):
-        return 1
-
-    @property
-    def price(self):
-        return 5
+    size = 1
+    price = 5
