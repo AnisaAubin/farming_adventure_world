@@ -6,44 +6,28 @@ class Player:
         self.inventory = []
         self.money = 0
         self.wheelbarrow = None
-        self._capacity = 2
+        self.capacity = 2
 
     def sell(self, item):
         self.money += item.price
         self.inventory.remove(item)
-        # Remove capacity from player (or wheelbarrow if they have one)
-        if self.wheelbarrow is not None:
-            self.wheelbarrow.removeitem(item)
-        else:
-            self._capacity += item.size
-
-    @property
-    # sets the players carrying capacity to 2 if they don't have the
-    # wheelbarrow otherwise the wheelbarrows.
-    def capacity(self):
-        if self.wheelbarrow is not None:
-            return self.wheelbarrow.availableCapacity
-        else:
-            return self._capacity
+        # Remove capacity from player
+        self.capacity += item.size
 
     def collect(self, item):
         # Allowing a player to pick up an item,
         # if they have a wheelbarrow adds item and adjusts availablecapacity.
         if isinstance(item, Wheelbarrow):
-            if self.wheelbarrow is not None:
-                pass  # don't let player pick up a duplicated wheelbarrow.
-            else:
+            if self.wheelbarrow is None:
                 self.wheelbarrow = item
-                for i in self.inventory:
-                    self.wheelbarrow.additem(i)  # + current items to barrow
+                used = sum([i.size for i in self.inventory])
+                self.capacity = 6 - used
                 self.inventory.append(item)
+            # It's not possible to pick up a second WheelBarrow
         else:
-            if item.size < self.capacity:
+            if item.size <= self.capacity:
                 self.inventory.append(item)
-                if self.wheelbarrow is not None:
-                    self.wheelbarrow.additem(item)
-                else:
-                    self._capacity -= item.size
+                self.capacity -= item.size
 
     def leaveitem(self, item, location):
         # allowing player to leave item except wheelbarrow
@@ -53,15 +37,15 @@ class Player:
                 self.sell(item)
             else:
                 if item != self.wheelbarrow:
-                    self._capacity += item.size
+                    self.capacity += item.size
                     self.inventory.remove(item)
                 else:
-                    non_wheelbarrows = [
+                    non_wheelbarrow_items = [
                         i for i in self.inventory if i != self.wheelbarrow]
                     # Can only leave an empty wheelbarrow
-                    if non_wheelbarrows:
+                    if non_wheelbarrow_items:
                         raise ValueError
                     else:
-                        self._capacity = 2
+                        self.capacity = 2
                         self.inventory.remove(self.wheelbarrow)
                         self.wheelbarrow = None

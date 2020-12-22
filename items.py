@@ -36,26 +36,6 @@ class Wheelbarrow(Item):
     def size(self):
         return 7  # size too big to put in the wheelbarrow.
 
-    def __init__(self):
-        self.capacity = 6  # the items in the wheelbarrow cannot exceed this.
-        self.items = []  # what is in the wheelbarrow
-        self.availableCapacity = 6  # remaining space in wheelbarrow
-
-    def additem(self, item):
-        # check if item can fit in wheelbarrow and adjust capacity
-        if item.size <= self.availableCapacity:
-            self.items.append(item)
-            self.availableCapacity -= item.size
-        else:
-            raise ValueError
-
-    def removeitem(self, item):
-        if item in self.items:
-            self.items.remove(item)
-            self.availableCapacity += item.size
-        else:
-            raise IndexError
-
 
 class SellableItem(Item):
     @abstractproperty
