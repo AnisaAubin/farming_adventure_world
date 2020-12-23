@@ -3,6 +3,7 @@ from tkinter import messagebox
 from PIL import ImageTk, Image
 from game import Game
 import random
+from functools import partial
 
 
 class App(tk.Frame):
@@ -19,10 +20,10 @@ class App(tk.Frame):
 
         super().__init__(master=root)
         self.gameFrame = tk.Frame(
-            root, width=800, height=300, bg='WHITE', borderwidth=3)
+            root, width = 1025, height = 550, bg='WHITE', borderwidth=3)
         self.gameFrame.pack_propagate(0)   # Prevents resizing
         self.navFrame = tk.Frame(
-            root, width=800, height=300, bg='GREY', borderwidth=3)
+            root, width = 1025, height =550, bg='GREY', borderwidth=3)
         self.navFrame.grid_propagate(0)   # Prevents resizing
         # This packs both frames into the root window ...
         self.gameFrame.pack()
@@ -32,21 +33,22 @@ class App(tk.Frame):
         menubar = tk.Menu()
         menubar.add_command(label='About', command=self.showAbout)
         menubar.add_command(label='Account', command=self.showAccount)
+        menubar.add_command(label='Inventory', command=self.showItems)
         menubar.add_command(label='Hints', command=self.displayHint)
         menubar.add_command(label='Quit', command=root.destroy)
         root.config(menu=menubar)
 
         # Now we add images. These are stored in the images/ folder
         self.ghsImg = ImageTk.PhotoImage(Image.open('images/greenhouse.png')) 
-        self.rsegdnImg = ImageTk.PhotoImage(Image.open('images/greenhouse.png'))
-        self.gdnImg = ImageTk.PhotoImage(Image.open('images/greenhouse.png'))
-        self.fldImg = ImageTk.PhotoImage(Image.open('images/greenhouse.png'))
-        self.stallImg = ImageTk.PhotoImage(Image.open('images/greenhouse.png'))
-        self.wkshpImg = ImageTk.PhotoImage(Image.open('images/greenhouse.png'))
-        self.grgImg = ImageTk.PhotoImage(Image.open('images/greenhouse.png'))
-        self.entImg = ImageTk.PhotoImage(Image.open('images/greenhouse.png'))
-        self.barnImg = ImageTk.PhotoImage(Image.open('images/greenhouse.png'))
-        self.cknImg = ImageTk.PhotoImage(Image.open('images/greenhouse.png'))
+        self.rsegdnImg = ImageTk.PhotoImage(Image.open('images/rose_garden.png'))
+        self.gdnImg = ImageTk.PhotoImage(Image.open('images/garden.png'))
+        self.fldImg = ImageTk.PhotoImage(Image.open('images/field.png'))
+        self.stallImg = ImageTk.PhotoImage(Image.open('images/farm_stall.png'))
+        self.wkshpImg = ImageTk.PhotoImage(Image.open('images/workshop.png'))
+        self.grgImg = ImageTk.PhotoImage(Image.open('images/garage.png'))
+        self.entImg = ImageTk.PhotoImage(Image.open('images/entrance.png'))
+        self.barnImg = ImageTk.PhotoImage(Image.open('images/barn.png'))
+        self.cknImg = ImageTk.PhotoImage(Image.open('images/chicken_coop.png'))
 
         # add a dictionary of buttons to use for available navigation options
         self.buttons = {
@@ -104,6 +106,7 @@ class App(tk.Frame):
 
         self.display_current_location()
         self.disable_buttons()
+        
         # Now add some useful widgets ...
         # self.textArea1 = tk.Label(self.gameFrame, text='whats here')
         # self.textArea1.pack()
@@ -114,16 +117,54 @@ class App(tk.Frame):
     def display_current_location(self):
         for widget in self.gameFrame.winfo_children():
             widget.destroy()
+        self.locImg = ImageTk.PhotoImage(
+            Image.open(f'images/{self.game.currently.name}.jpg'))
+        self.bckgdImg = tk.Label(self.gameFrame, image=self.locImg)
+        self.bckgdImg.place(x=0, y=0, relwidth=1, relheight=1)
+
         loc = tk.Label(self.gameFrame, text=self.game.currently.name)
         loc.pack()
+        self.display_contents()
+        self.display_droppables()
+
+    def display_contents(self):
+        pickup = self.game.getAvaialblePickUpItems()
+        for i, p in enumerate(pickup):
+            item = tk.Button(
+                self.gameFrame,
+                text=p,
+                command=partial(self.game.addItemtoInventory, p))
+            item.grid(row=i, column=0)
+
+    def display_droppables(self):
+        drop = self.game.getAvaialbleLeaveItems()
+        for i, d in enumerate(drop):
+            item = tk.Button(
+                self.gameFrame,
+                text=d,
+                command=partial(self.game.leaveItemAtLocation, d))
+            item.grid(row=i, column=1)
 
     def disable_buttons(self):
         exits = self.game.currently.exits
         for location_name, button in self.buttons.items():
-            if location_name not in exits:
+            if location_name == self.game.currently.name:
+                button["state"] = "normal"
+                button['relief'] = 'sunken'
+                button['bg'] = 'red'
+                button['activebackground'] = 'red'
+                button['bd'] = '5'
+            elif location_name not in exits:
                 button["state"] = "disabled"
+                button['relief'] = 'flat'
+                button['bg'] = 'grey'
+                button['bd'] = '5'
+                button['foreground'] = 'white'
             else:
                 button["state"] = "normal"
+                button['bg'] = 'blue'
+                button['bd'] = '5'
+                button['activebackground'] = 'red'
 
     def location_changed(self, loc_name):
         self.game.changeLocation(loc_name)
@@ -138,6 +179,10 @@ class App(tk.Frame):
     def showAccount(self):
         messagebox.showinfo(
             'Balance', f'You have £{self.game.getAccountBal()} Balance')
+
+    def showItems(self):
+        messagebox.showinfo(
+            'Collected Items', f'You have these items:{self.game.getInventory()} ')
 
     def displayHint(self):
         hints = [
