@@ -5,6 +5,8 @@ from game import Game
 import random
 from functools import partial
 
+import items
+
 
 class App(tk.Frame):
     # Creates a Frame for the application
@@ -104,6 +106,18 @@ class App(tk.Frame):
         self.buttons['barn'].grid(row=1, column=3)
         self.buttons['chicken_coop'].grid(row=1, column=4)
 
+        self.items = {
+            "seeds": items.Seeds(),
+            "water": items.Water(),
+            "feed": items.Feed(),
+            "manure": items.Manure(),
+            "wheelbarrow": items.Wheelbarrow(),
+            "eggs": items.Eggs(),
+            "vegetables": items.Vegetables(),
+            "herbs": items.Herbs(),
+            "roses": items.Roses(),
+        }
+
         self.display_current_location()
         self.disable_buttons()
         
@@ -128,21 +142,23 @@ class App(tk.Frame):
         self.display_droppables()
 
     def display_contents(self):
+        self.wheelbarrowpu = ImageTk.PhotoImage(Image.open('images/wheelbarrowpu.png'))
         pickup = self.game.getAvaialblePickUpItems()
         for i, p in enumerate(pickup):
             item = tk.Button(
                 self.gameFrame,
-                text=p,
-                command=partial(self.game.addItemtoInventory, p))
+                image=self.wheelbarrowpu,
+                command=partial(self.game.addItemtoInventory, self.items[p]))
             item.grid(row=i, column=0)
 
     def display_droppables(self):
+        self.eggdrop = ImageTk.PhotoImage(Image.open('images/eggdrop.png'))
         drop = self.game.getAvaialbleLeaveItems()
         for i, d in enumerate(drop):
             item = tk.Button(
                 self.gameFrame,
-                text=d,
-                command=partial(self.game.leaveItemAtLocation, d))
+                image=self.eggdrop,
+                command=partial(self.game.leaveItemAtLocation, self.items[d]))
             item.grid(row=i, column=1)
 
     def disable_buttons(self):

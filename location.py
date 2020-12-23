@@ -30,42 +30,42 @@ locations = {
     'field': Location(
         "field",
         exits=['garden'],
-        collectableitems=[Manure()]),
+        collectableitems=["manure"]),
     'garden': Location(
         "garden",
         exits=['farm_stall', 'barn', 'rose_garden', 'greenhouse'],
-        collectableitems=[Vegetables(), Herbs()],
-        itemstoleave=[Water(), Manure(), Seeds()]),
+        collectableitems=["vegetables", "herbs"],
+        itemstoleave=["water", "manure", "seeds"]),
     'barn': Location(
         "barn",
         exits=['chicken_coop'],
-        collectableitems=[Water(), Feed(), Seeds()],
-        itemstoleave=[Water(), Feed(), Seeds(), Vegetables(), Herbs()]),
+        collectableitems=["water", "feed", "seeds"],
+        itemstoleave=["water", "feed", "seeds", "vegetables", "herbs"]),
     'garage': Location(
         "garage",
         exits=['workshop']),
     'workshop': Location(
         "workshop",
         exits=['garden'],
-        collectableitems=[Wheelbarrow()],
-        itemstoleave=[Wheelbarrow()]),
+        collectableitems=["wheelbarrow"],
+        itemstoleave=["wheelbarrow"]),
     'chicken_coop': Location(
         "chicken_coop",
         exits=['farm_stall', 'garden'],
-        collectableitems=[Eggs()],
-        itemstoleave=[Water(), Feed()]),
+        collectableitems=["eggs"],
+        itemstoleave=["water", "feed"]),
     'greenhouse': Location(
         "greenhouse",
         exits=['garden'],
-        collectableitems=[Vegetables(), Herbs()],
-        itemstoleave=[Water(), Manure(), Seeds()]),
+        collectableitems=["vegetables", "herbs"],
+        itemstoleave=["water", "manure", "seeds"]),
     'rose_garden': Location(
         "rose_garden",
         exits=['garden'],
-        collectableitems=[Roses()],
-        itemstoleave=[Water(), Manure()]),
+        collectableitems=["roses"],
+        itemstoleave=["water", "manure"]),
     'farm_stall': Location(
         "farm_stall",
         exits=['field'],
-        itemstoleave=[Eggs(), Vegetables(), Roses(), Herbs()])
+        itemstoleave=["eggs", "vegetables", "roses", "herbs"])
 }
