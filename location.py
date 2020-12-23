@@ -33,7 +33,7 @@ locations = {
         collectableitems=[Manure()]),
     'garden': Location(
         "garden",
-        exits=['farm_stall', 'barn', 'rose_garden'],
+        exits=['farm_stall', 'barn', 'rose_garden', 'greenhouse'],
         collectableitems=[Vegetables(), Herbs()],
         itemstoleave=[Water(), Manure(), Seeds()]),
     'barn': Location(
