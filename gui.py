@@ -46,7 +46,7 @@ class App(tk.Frame):
         # menubar.(label="ChangeText", menu=Account)
         root.config(menu=menubar)
 
-        # Now we add images. These are stored in the images/ folder
+        # Now we add images (for NavFrame). These are stored in the images/ folder
         self.ghsImg = ImageTk.PhotoImage(Image.open('images/greenhouse.png')) 
         self.rsegdnImg = ImageTk.PhotoImage(Image.open('images/rose_garden.png'))
         self.gdnImg = ImageTk.PhotoImage(Image.open('images/garden.png'))
@@ -112,6 +112,7 @@ class App(tk.Frame):
         self.buttons['barn'].grid(row=1, column=3)
         self.buttons['chicken_coop'].grid(row=1, column=4)
 
+        #  Dictionary of the items to ensure only one instance of the item, copied everywhere.
         self.items = {
             "seeds": items.Seeds(),
             "water": items.Water(),
@@ -125,6 +126,7 @@ class App(tk.Frame):
             "honey": items.Honey(),
         }
 
+        # dictionary of images to fetch correct images in a loop for each location.
         self.collect_images = {
             "seeds": ImageTk.PhotoImage(
                 Image.open('images/seedpu.png')),
@@ -173,17 +175,10 @@ class App(tk.Frame):
 
         self.display_current_location()
         self.disable_buttons()
-        
-        # Now add some useful widgets ...
-        # self.textArea1 = tk.Label(self.gameFrame, text='whats here')
-        # self.textArea1.pack()
-        # self.cmdArea = tk.Entry(self.navFrame, text='testingCMD')
-        # self.cmdArea.pack()
-        # self.buildGUI()
 
     def display_current_location(self):
         for widget in self.gameFrame.winfo_children():
-            widget.destroy()
+            widget.destroy()  #  clear the Gameframe for the new current location
         self.locImg = ImageTk.PhotoImage(
             Image.open(f'images/{self.game.currently.name}.jpg'))
         self.bckgdImg = tk.Label(self.gameFrame, image=self.locImg)
@@ -197,7 +192,7 @@ class App(tk.Frame):
         self.display_players_current_inventory()
         self.display_droppables()
 
-    def display_contents(self):
+    def display_contents(self):  # shows whats available to be picked up
         pickup = self.game.getAvaialblePickUpItems()
         for i, p in enumerate(pickup):
             item = tk.Button(
@@ -206,14 +201,14 @@ class App(tk.Frame):
                 command=partial(self.add_to_inventory, self.items[p]))
             item.grid(row=i, column=0)
 
-    def display_droppables(self):
+    def display_droppables(self):  # shows what's available tp be left
         drop = self.game.getAvaialbleLeaveItems()
         for i, d in enumerate(drop):
             print(d, self.game.getInventory())
-            if d.title() in self.game.getInventory(): #  get the matching case of the name of items in inventory so they can be compared
+            if d.title() in self.game.getInventory():  # get the matching case of the name of items in inventory so they can be compared
                 state = "normal"
             else:
-                state = "disabled" # filter so that buttons only show active if you have the item
+                state = "disabled"  # filter so that buttons only show active if you have the item
             item = tk.Button(
                 self.gameFrame,
                 image=self.drop_images[d],
@@ -221,55 +216,62 @@ class App(tk.Frame):
                 command=partial(self.remove_from_inventory, self.items[d]))
             item.grid(row=i, column=2)
 
-    def add_to_inventory(self, item):
+    def add_to_inventory(self, item):  # update the inventory when adding item to inventory
         self.game.addItemtoInventory(item)
         self.inventoryVar.set(self.game.getInventory())
 
-    def remove_from_inventory(self, item):
+    def remove_from_inventory(self, item):  # update the inventory when changing the inventory
         self.game.leaveItemAtLocation(item)
         self.inventoryVar.set(self.game.getInventory())
 
-    def display_players_current_inventory(self):
+    def display_players_current_inventory(self):  # showing the inventory as it changes
         self.box.grid(row=0, column=1)
 
-    def disable_buttons(self):
+    def disable_buttons(self): # don't allow player to click on invalid moves
         exits = self.game.currently.exits
         for location_name, button in self.buttons.items():
-            if location_name == self.game.currently.name:
+            if location_name == self.game.currently.name:  #  highlight 'you are here'
                 button["state"] = "normal"
                 button['relief'] = 'sunken'
                 button['bg'] = 'red'
                 button['activebackground'] = 'red'
                 button['bd'] = '5'
-            elif location_name not in exits:
+            elif location_name not in exits:  # invalid moves
                 button["state"] = "disabled"
                 button['relief'] = 'flat'
                 button['bg'] = 'grey'
                 button['bd'] = '5'
                 button['foreground'] = 'white'
-            else:
+            else:  # possible moves
                 button["state"] = "normal"
                 button['bg'] = 'blue'
                 button['bd'] = '5'
-                button['activebackground'] = 'red'
+                button['activebackground'] = 'red' # adding mouseover
 
     def location_changed(self, loc_name):
         self.game.changeLocation(loc_name)
         self.display_current_location()
         self.disable_buttons()
 
+    #  Functions below for populating the menubar
     def showAbout(self):
         messagebox.showinfo(
-            'About', 'Click on an available location on the map to move,'
-            'see what you can find to do the chores and get your pay')
+            'About', 'Click on an available location on the map to move, '
+            'see what you can find to do the chores and get your pay from selling items at the farm stall. \n \n'
+            'The black icons are avialble to be picked up and can '
+            "be taken to any location with it's negative button (active). \n\n"
+            'You have a limited capacity so clicking on an item multiple times will '
+            "not be effective, you will see your items in your inventory when they're added."
+            '\n\nCheck your account and hints in the menubar to help you. \n\nHave fun!')
 
     def showAccount(self):
         messagebox.showinfo(
-            'Balance', f'You have £{self.game.getAccountBal()} Balance')
+            'Balance', f'You have £{self.game.getAccountBal()} Balance'
+            )
 
     def showItems(self):
         messagebox.showinfo(
-            'Collected Items', f'You have these items:{self.game.getInventory()} ')
+            'Collected Items', f'You have these items:{self.game.getInventory()}')
 
     def displayHint(self):
         hints = [
@@ -286,8 +288,8 @@ def main():
     # create window with title, size etc.
     win = tk.Tk()
     win.title('Farm Adventure World')
-    win.geometry('800x600')
-    win.resizable(False, False)
+    win.geometry('1050x1080')
+    win.resizable(True, True)
 
     # Create the GUI as a Frame
     # and attach it to the window ...
@@ -295,10 +297,6 @@ def main():
 
 # Call the GUI mainloop ...
     win.mainloop()
-
-
-def Showavailableitems(location):
-    return location.collectableitems
 
 
 if __name__ == '__main__':
