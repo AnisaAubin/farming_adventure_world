@@ -21,23 +21,29 @@ class App(tk.Frame):
         # by a top level instance root.
 
         super().__init__(master=root)
+        # set up the Gameframe
         self.gameFrame = tk.Frame(
-            root, width = 1025, height = 550, bg='WHITE', borderwidth=3)
+            root, width=1025, height=550, bg='WHITE', borderwidth=3)
+        self.gameFrame.grid_propagate(0)   # Prevents resizing
         self.gameFrame.pack_propagate(0)   # Prevents resizing
+        self.inventoryVar = tk.StringVar(value=['Your Inventory'])  # adding variable to hold inventory in gameframe
+        # set up the Navigationframe
         self.navFrame = tk.Frame(
-            root, width = 1025, height =550, bg='GREY', borderwidth=3)
+            root, width=1025, height=550, bg='GREY', borderwidth=3)
         self.navFrame.grid_propagate(0)   # Prevents resizing
         # This packs both frames into the root window ...
         self.gameFrame.pack()
         self.navFrame.pack()
 
-        # add buttons to the menubar 
+        # add buttons to the menubar
         menubar = tk.Menu()
         menubar.add_command(label='About', command=self.showAbout)
         menubar.add_command(label='Account', command=self.showAccount)
         menubar.add_command(label='Inventory', command=self.showItems)
         menubar.add_command(label='Hints', command=self.displayHint)
         menubar.add_command(label='Quit', command=root.destroy)
+        # Account = tk.Menu()
+        # menubar.(label="ChangeText", menu=Account)
         root.config(menu=menubar)
 
         # Now we add images. These are stored in the images/ folder
@@ -116,6 +122,53 @@ class App(tk.Frame):
             "vegetables": items.Vegetables(),
             "herbs": items.Herbs(),
             "roses": items.Roses(),
+            "honey": items.Honey(),
+        }
+
+        self.collect_images = {
+            "seeds": ImageTk.PhotoImage(
+                Image.open('images/seedpu.png')),
+            "water": ImageTk.PhotoImage(
+                Image.open('images/waterpu.png')),
+            "feed": ImageTk.PhotoImage(
+                Image.open('images/feedpu.png')),
+            "manure": ImageTk.PhotoImage(
+                Image.open('images/manurepu.png')),
+            "wheelbarrow": ImageTk.PhotoImage(
+                Image.open('images/wheelbarrowpu.png')),
+            "eggs": ImageTk.PhotoImage(
+                Image.open('images/eggpu.png')),
+            "vegetables": ImageTk.PhotoImage(
+                Image.open('images/vegpu.png')),
+            "herbs": ImageTk.PhotoImage(
+                Image.open('images/herbpu.png')),
+            "roses": ImageTk.PhotoImage(
+                Image.open('images/rosepu.png')),
+            "honey": ImageTk.PhotoImage(
+                Image.open('images/honeypu.png')),
+        }
+
+        self.drop_images = {
+            "seeds": ImageTk.PhotoImage(
+                Image.open('images/seedneg.png')),
+            "water": ImageTk.PhotoImage(
+                Image.open('images/waterneg.png')),
+            "feed": ImageTk.PhotoImage(
+                Image.open('images/feedneg.png')),
+            "manure": ImageTk.PhotoImage(
+                Image.open('images/manureneg.png')),
+            "wheelbarrow": ImageTk.PhotoImage(
+                Image.open('images/barrowneg.png')),
+            "eggs": ImageTk.PhotoImage(
+                Image.open('images/eggdrop.png')),
+            "vegetables": ImageTk.PhotoImage(
+                Image.open('images/vegneg.png')),
+            "herbs": ImageTk.PhotoImage(
+                Image.open('images/herbneg.png')),
+            "roses": ImageTk.PhotoImage(
+                Image.open('images/roseneg.png')),
+            "honey": ImageTk.PhotoImage(
+                Image.open('images/honeyneg.png')),
         }
 
         self.display_current_location()
@@ -135,31 +188,43 @@ class App(tk.Frame):
             Image.open(f'images/{self.game.currently.name}.jpg'))
         self.bckgdImg = tk.Label(self.gameFrame, image=self.locImg)
         self.bckgdImg.place(x=0, y=0, relwidth=1, relheight=1)
+        self.box = tk.Listbox(
+            self.gameFrame, listvariable=self.inventoryVar)
 
         loc = tk.Label(self.gameFrame, text=self.game.currently.name)
         loc.pack()
         self.display_contents()
+        self.display_players_current_inventory()
         self.display_droppables()
 
     def display_contents(self):
-        self.wheelbarrowpu = ImageTk.PhotoImage(Image.open('images/wheelbarrowpu.png'))
         pickup = self.game.getAvaialblePickUpItems()
         for i, p in enumerate(pickup):
             item = tk.Button(
                 self.gameFrame,
-                image=self.wheelbarrowpu,
-                command=partial(self.game.addItemtoInventory, self.items[p]))
+                image=self.collect_images[p],
+                command=partial(self.add_to_inventory, self.items[p]))
             item.grid(row=i, column=0)
 
     def display_droppables(self):
-        self.eggdrop = ImageTk.PhotoImage(Image.open('images/eggdrop.png'))
         drop = self.game.getAvaialbleLeaveItems()
         for i, d in enumerate(drop):
             item = tk.Button(
                 self.gameFrame,
-                image=self.eggdrop,
-                command=partial(self.game.leaveItemAtLocation, self.items[d]))
-            item.grid(row=i, column=1)
+                image=self.drop_images[d],
+                command=partial(self.remove_from_inventory, self.items[d]))
+            item.grid(row=i, column=2)
+
+    def add_to_inventory(self, item):
+        self.game.addItemtoInventory(item)
+        self.inventoryVar.set(self.game.getInventory())
+
+    def remove_from_inventory(self, item):
+        self.game.leaveItemAtLocation(item)
+        self.inventoryVar.set(self.game.getInventory())
+
+    def display_players_current_inventory(self):
+        self.box.grid(row=0, column=1)
 
     def disable_buttons(self):
         exits = self.game.currently.exits

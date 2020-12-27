@@ -32,7 +32,7 @@ class Player:
     def leaveitem(self, item, location):
         # allowing player to leave item except wheelbarrow
         # if items left at the farm stall increase payout.
-        if location.name == "farm stall":
+        if location.name == "farm_stall":
             self.sell(item)
         else:
             if item != self.wheelbarrow:

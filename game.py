@@ -33,7 +33,8 @@ class Game:
         return self.player.money
 
     def getInventory(self):
-        return self.player.inventory
+        return[
+            i.name for i in self.player.inventory]
 
     def play(self):
         """

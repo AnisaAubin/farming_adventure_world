@@ -30,7 +30,7 @@ locations = {
     'field': Location(
         "field",
         exits=['garden'],
-        collectableitems=["manure"]),
+        collectableitems=["manure", "honey"]),
     'garden': Location(
         "garden",
         exits=['farm_stall', 'barn', 'rose_garden', 'greenhouse'],
@@ -67,5 +67,5 @@ locations = {
     'farm_stall': Location(
         "farm_stall",
         exits=['field'],
-        itemstoleave=["eggs", "vegetables", "roses", "herbs"])
+        itemstoleave=["eggs", "vegetables", "roses", "herbs", "honey"])
 }
