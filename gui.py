@@ -209,9 +209,15 @@ class App(tk.Frame):
     def display_droppables(self):
         drop = self.game.getAvaialbleLeaveItems()
         for i, d in enumerate(drop):
+            print(d, self.game.getInventory())
+            if d.title() in self.game.getInventory(): #  get the matching case of the name of items in inventory so they can be compared
+                state = "normal"
+            else:
+                state = "disabled" # filter so that buttons only show active if you have the item
             item = tk.Button(
                 self.gameFrame,
                 image=self.drop_images[d],
+                state=state,
                 command=partial(self.remove_from_inventory, self.items[d]))
             item.grid(row=i, column=2)
 
