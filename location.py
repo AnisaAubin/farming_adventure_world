@@ -40,7 +40,7 @@ locations = {
         "barn",
         exits=['chicken_coop'],
         collectableitems=["water", "feed", "seeds"],
-        itemstoleave=["water", "feed", "seeds", "vegetables", "herbs"]),
+        itemstoleave=["vegetables", "herbs"]),
     'garage': Location(
         "garage",
         exits=['workshop']),
@@ -48,7 +48,7 @@ locations = {
         "workshop",
         exits=['garden'],
         collectableitems=["wheelbarrow"],
-        itemstoleave=["wheelbarrow"]),
+        itemstoleave=[]),
     'chicken_coop': Location(
         "chicken_coop",
         exits=['farm_stall', 'garden'],

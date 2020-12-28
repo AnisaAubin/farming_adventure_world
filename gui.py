@@ -191,38 +191,80 @@ class App(tk.Frame):
         self.display_contents()
         self.display_players_current_inventory()
         self.display_droppables()
+    
+    def set_pubutton_state(self, button, item_name):
+        if item_name.title() == 'Wheelbarrow': # only/always colect 1 wheelbarrow
+            if item_name.title() in self.game.getInventory():
+                state = 'disabled'
+            else:
+                state = "normal"
+        # get the matching case of the name of items in inventory so they can be compared
+        elif self.items[item_name].size < self.game.player.capacity:
+            state = "normal"
+        else:
+            state = "disabled"  # filter so that buttons only show active if you have the item
+        button['state'] = state
 
     def display_contents(self):  # shows whats available to be picked up
         pickup = self.game.getAvaialblePickUpItems()
-        for i, p in enumerate(pickup):
-            item = tk.Button(
+        for i, item_name in enumerate(pickup):
+            button = tk.Button(
                 self.gameFrame,
-                image=self.collect_images[p],
-                command=partial(self.add_to_inventory, self.items[p]))
-            item.grid(row=i, column=0)
+                image=self.collect_images[item_name])
 
+            # create function to set button position (and refresh the view)
+            set_position = partial(button.grid, row=i, column=0)
+            set_state = partial(self.set_pubutton_state, button, item_name)
+            
+            # ensure that when button is pressed, the item is added to
+            # the inventory and the view is refreshed
+            button['command'] = partial(
+                self.add_to_inventory,
+                self.items[item_name], set_state, set_position)
+            
+            # refresh the view now.
+            set_state()
+            set_position()
+
+    def set_button_state(self, button, item):
+        if item.title() in self.game.getInventory(): # get the matching case of the name of items in inventory so they can be compared
+            state = "normal"
+        else:
+            state = "disabled"  # filter so that buttons only show active if you have the item
+        button['state'] = state
+            
     def display_droppables(self):  # shows what's available tp be left
         drop = self.game.getAvaialbleLeaveItems()
-        for i, d in enumerate(drop):
-            print(d, self.game.getInventory())
-            if d.title() in self.game.getInventory():  # get the matching case of the name of items in inventory so they can be compared
-                state = "normal"
-            else:
-                state = "disabled"  # filter so that buttons only show active if you have the item
-            item = tk.Button(
+        for i, item_name in enumerate(drop):
+            button = tk.Button(
                 self.gameFrame,
-                image=self.drop_images[d],
-                state=state,
-                command=partial(self.remove_from_inventory, self.items[d]))
-            item.grid(row=i, column=2)
+                image=self.drop_images[item_name])
 
-    def add_to_inventory(self, item):  # update the inventory when adding item to inventory
+            # create function to set button position (and refresh the view)
+            set_position = partial(button.grid, row=i, column=2)
+            set_state = partial(self.set_button_state, button, item_name)
+            
+            # ensure that when button is pressed, the item is removed from
+            # inventory and view refreshed
+            button['command'] = partial(
+                self.remove_from_inventory,
+                self.items[item_name], set_state, set_position)
+            
+            # refresh the view now.
+            set_state()
+            set_position()
+
+    def add_to_inventory(self, item, set_state, set_position):  # update the inventory when adding item to inventory
         self.game.addItemtoInventory(item)
         self.inventoryVar.set(self.game.getInventory())
+        set_state()
+        set_position()
 
-    def remove_from_inventory(self, item):  # update the inventory when changing the inventory
+    def remove_from_inventory(self, item, set_state, set_position):  # update the inventory when changing the inventory
         self.game.leaveItemAtLocation(item)
         self.inventoryVar.set(self.game.getInventory())
+        set_state()
+        set_position()
 
     def display_players_current_inventory(self):  # showing the inventory as it changes
         self.box.grid(row=0, column=1)
