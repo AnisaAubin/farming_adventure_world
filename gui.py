@@ -4,8 +4,15 @@ from PIL import ImageTk, Image
 from game import Game
 import random
 from functools import partial
+import logging
 
 import items
+
+logging.basicConfig(
+    level=logging.INFO,
+    filemode='w',  # set log to overwrite note apprend 'a', or rotation
+    filename='event.log')
+log = logging.getLogger(__name__)
 
 
 class App(tk.Frame):
@@ -336,7 +343,9 @@ def main():
     myApp = App(win)
 
 # Call the GUI mainloop ...
+    log.info(' Starting game')
     win.mainloop()
+    log.info(' Quit game')
 
 
 if __name__ == '__main__':

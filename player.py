@@ -1,4 +1,7 @@
 from items import Wheelbarrow
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class Player:
@@ -34,10 +37,12 @@ class Player:
         # if items left at the farm stall increase payout.
         if location.name == "farm_stall":
             self.sell(item)
+            log.info(f' Sold {item.name} for £{item.price}')  # Log sold item
         else:
             if item != self.wheelbarrow:
                 self.capacity += item.size
                 self.inventory.remove(item)
+                log.info(f' Left {item.name} at {location.name}')  # Log drop
             else:
                 non_wheelbarrow_items = [
                     i for i in self.inventory if i != self.wheelbarrow]
