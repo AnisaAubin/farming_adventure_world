@@ -32,6 +32,9 @@ class App(tk.Frame):
         self.gameFrame = tk.Frame(
             root, width=1025, height=550, bg='WHITE', borderwidth=3)
         self.gameFrame.grid_propagate(0)   # Prevents resizing
+        self.gameFrame.columnconfigure(0, weight=0)
+        self.gameFrame.columnconfigure(1, weight=4)
+        self.gameFrame.columnconfigure(2, weight=0)
         self.gameFrame.pack_propagate(0)   # Prevents resizing
         self.inventoryVar = tk.StringVar(value=['Your Inventory'])  # adding variable to hold inventory in gameframe
         # set up the Navigationframe
@@ -191,14 +194,19 @@ class App(tk.Frame):
         self.bckgdImg = tk.Label(self.gameFrame, image=self.locImg)
         self.bckgdImg.place(x=0, y=0, relwidth=1, relheight=1)
         self.box = tk.Listbox(
-            self.gameFrame, listvariable=self.inventoryVar)
+            self.gameFrame, listvariable=self.inventoryVar, height=5, bg='light blue')  # fix the height of the inventory box
 
-        loc = tk.Label(self.gameFrame, text=self.game.currently.name)
-        loc.pack()
+        loc = tk.Label(self.gameFrame, text=self.set_currentLocation_name(
+            self.game.currently.name), bg='light blue')
+        loc.pack(side=tk.BOTTOM)  # fix the current room title at the bottom
         self.pickups = self.create_pickup_collection()
         self.drops = self.create_drop_collection()
         self.set_button_states()
         self.display_players_current_inventory()
+
+    def set_currentLocation_name(self, name):
+        components = name.split('_')
+        return ' '.join(x.title() for x in components)
     
     def create_pickup_collection(self):
         pickup_buttons = []
@@ -209,7 +217,7 @@ class App(tk.Frame):
                 image=self.collect_images[item_name],
                 command=partial(
                     self.add_to_inventory, self.items[item_name]))
-            button.grid(row=i, column=0)
+            button.grid(row=i, column=0, sticky='E')
             pickup_buttons.append(
                 (self.items[item_name], button)
             )
@@ -224,7 +232,7 @@ class App(tk.Frame):
                 image=self.drop_images[item_name],
                 command=partial(
                     self.remove_from_inventory, self.items[item_name]))
-            button.grid(row=i, column=2)
+            button.grid(row=i, column=2, sticky='W')
             drop_buttons.append(
                 (self.items[item_name], button)
             )
@@ -323,10 +331,14 @@ class App(tk.Frame):
     def displayHint(self):
         hints = [
             'If you find the wheelbarrow you can carry more things',
-            'Take your items to the stall so you can get money for them',
+            'Pick up items on your left and drop them on the right', 
+            'Different locations have different items (to pick up and leave)',
+            'Take your items to the Farm Stall so you can get money for them',
             'If you want to carry manure you will need the wheelbarrow',
-            'Did you check for eggs in the chicken coop',
-            'Roses are worth more than vegetables'
+            'You are limited by a set ccapacity, the items have different capacitties'
+            'Did you check for eggs in the chicken coop?',
+            'Roses are worth more than vegetables',
+            'You can scroll down your inventory list to see what you have'
         ]
         messagebox.showinfo('Hint', random.choice(hints))
 
