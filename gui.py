@@ -313,10 +313,10 @@ class App(tk.Frame):
         messagebox.showinfo(
             'About', 'Click on an available location on the map to move, '
             'see what you can find to do the chores and get your pay from selling items at the farm stall. \n \n'
-            'The black icons are avialble to be picked up and can '
-            "be taken to any location with it's negative button (active). \n\n"
-            'You have a limited capacity so clicking on an item multiple times will '
-            "not be effective, you will see your items in your inventory when they're added."
+            'The black icons (left) are avialble to be picked up and can '
+            "be taken to any location with it's negative active button (right). \n\n"
+            'You have a limited capacity so if an item is not available try drop something first. '
+            "You will see your items in your inventory when they're added."
             '\n\nCheck your account and hints in the menubar to help you. \n\nHave fun!')
 
     def showAccount(self):
@@ -333,9 +333,10 @@ class App(tk.Frame):
             'If you find the wheelbarrow you can carry more things',
             'Pick up items on your left and drop them on the right', 
             'Different locations have different items (to pick up and leave)',
+            'The blue direction arrows on the map show possibly routes between locations',
             'Take your items to the Farm Stall so you can get money for them',
             'If you want to carry manure you will need the wheelbarrow',
-            'You are limited by a set ccapacity, the items have different capacitties'
+            'You are limited by a set capacity, items have different capacities',
             'Did you check for eggs in the chicken coop?',
             'Roses are worth more than vegetables',
             'You can scroll down your inventory list to see what you have'

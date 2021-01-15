@@ -5,8 +5,6 @@ from location import locations
 
 import unittest
 
-
-# test that adding item without wheelbarrow.
 class TestGame(unittest.TestCase):
     def setUp(self):
         self.game = Game()
@@ -20,11 +18,28 @@ class TestGame(unittest.TestCase):
         self.assertRaises(
             ValueError, self.game.changeLocation, 'entrance'
         )
-        #self.assertEqual(
-            #self.game.getAvaialblePickUpItems(), [Vegetables(), Herbs()])
-        
+        # test pick up vegetables, check availbable first
+        self.assertEqual(
+            self.game.getAvaialblePickUpItems(), ['vegetables', 'herbs'])
+        self.game.addItemtoInventory(Vegetables())
+        self.assertEqual(
+            self.game.getInventory(), ['Vegetables'])
+
+    # test Selling item, inventory changing and balance.
     def test_balance(self):
-        self.assertEqual(self.game.getAccountBal(), 0)
+        test_eggs = Eggs()  # Create instance of eggs to use
+        self.assertEqual(self.game.getAccountBal(), 0)  # check starting balance
+        self.game.changeLocation('barn')  # valid move
+        self.game.changeLocation('chicken_coop')
+        self.game.addItemtoInventory(test_eggs)  #  pick up eggs
+        self.assertEqual(
+            self.game.getInventory(), ['Eggs'])
+        self.game.changeLocation('farm_stall')
+        self.game.leaveItemAtLocation(test_eggs)  # sell eggs
+        self.assertEqual(self.game.getAccountBal(), 2)
+        self.assertEqual(
+            self.game.getInventory(), [])
+
 
     def tearDown(self):
         del(self.game)

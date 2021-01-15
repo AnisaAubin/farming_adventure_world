@@ -26,7 +26,7 @@ class TestGame(unittest.TestCase):
         # ValueError, wheelbarrow not left because it holds eggs
         self.assertRaises(
             ValueError,
-            self.player.leaveitem, self.wheelbarrow, locations['garden'])
+            self.player.leaveitem, self.wheelbarrow, locations['workshop'])
         self.assertEqual(self.player.capacity, 5)
 
     def tearDown(self):
